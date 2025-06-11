@@ -1,0 +1,192 @@
+https://kubespray.io/#/
+
+Below is a **detailed guide** for installing Kubespray in an offline environment. This guide will walk you through every part of the process—from gathering the necessary files on an online machine to configuring and deploying your Kubernetes cluster in an offline setup. At the end, you'll find a checklist summarizing all the tasks.
+
+---
+
+## Detailed Guide: Offline Kubespray Deployment
+
+### 1. Prerequisites
+
+- **Control Machine & Target Nodes:**  
+  Ensure you're using the same Linux distribution version on your online machine (for downloads) and your offline target nodes. Kubespray generally supports Ubuntu, RHEL, CentOS, and more.
+
+- **Ansible & Python Setup:**  
+  - Install Ansible (v2.11 or later recommended) on your control machine.  
+  - Ensure Python 3 and required Python modules (e.g., `netaddr`) are installed.
+
+- **Container Runtime:**  
+  - Install your container runtime (Docker or containerd/nerdctl) on all target nodes.  
+  - Prepare to configure a private registry for container images.
+
+- **Networking & File Transfer:**  
+  - Confirm that your offline environment allows internal connectivity between the control machine and the Kubernetes nodes (sometimes using a jump host).  
+  - Ensure sufficient storage and network file sharing if needed.
+
+---
+
+### 2. Downloading Offline Files
+
+#### a. Clone the Offline Support Scripts  
+Utilize the community-supported offline scripts from the [Kubespray Offline GitHub repo](https://github.com/kubespray-offline/kubespray-offline) . These scripts help you download:
+
+- **Container Images:** All images used by Kubernetes components (e.g., `kube-apiserver`, `etcd`, `coredns`, etc.).
+- **Kubespray Files:** The Kubespray playbooks and configuration.
+- **Python & OS Packages:** Offline mirrors for PyPI packages and OS dependencies (RPMs/DEBs).
+
+#### b. Configure Download Settings  
+- Edit the provided `config.sh` (or equivalent configuration file) to define your requirements—such as your target OS, container runtime (podman vs. containerd/nerdctl), and any additional container images.
+- Run the `download-all.sh` script to fetch all necessary artifacts. The process will create an `outputs` directory with:
+  - All container images saved (as tar archives)
+  - PyPI mirror files
+  - OS repository files for dependency packages
+
+---
+
+### 3. Transferring Files to the Offline Environment
+
+- **File Transfer:**  
+  Use removable storage or an internal network to copy the entire `outputs` directory to your offline environment.
+
+- **Location:**  
+  Place the files on the control machine or a central file server that all target nodes can access.
+
+- **Verify Files:**  
+  Confirm checksums or sizes to ensure the file integrity after the transfer.
+
+---
+
+### 4. Setting Up the Offline Infrastructure
+
+#### a. Local Package Repository
+- **OS Packages:**  
+  Set up a local repository (using tools such as `apt-mirror` for Debian/Ubuntu or a local yum repository for RHEL/CentOS) to serve the downloaded packages.
+  
+#### b. Private Container Registry
+- **Installation:**  
+  - Deploy a private Docker registry (using the official `registry:2` image) or use your container runtime’s registry capabilities.
+  - Load the downloaded container images using commands like `docker load -i <image>.tar` or `ctr images import <image>.tar`.
+- **Tag & Push:**  
+  Tag each image to point to your local registry and push them there.
+- **Configuration:**  
+  Ensure that all target nodes’ container runtime configurations are updated to use this registry. For Docker, update the daemon.json with the registry mirror; for containerd, modify its config file with the mirror configuration.
+
+#### c. Local PyPI Mirror (Optional)
+- **Mirror Setup:**  
+  If you need to install Python packages offline, configure a local PyPI mirror server and update your pip configuration to point to this mirror.
+
+---
+
+### 5. Configuring Kubespray for Offline Use
+
+#### a. Inventory and Cluster Configuration
+- **Inventory File:**  
+  Create or modify your inventory file (e.g., `inventory/mycluster/hosts.yml`) with the IP addresses and roles of your target Kubernetes nodes.
+
+#### b. Offline Configuration File
+- **Create/Edit Offline Settings:**  
+  Either use an existing `offline.yml` sample file (available in the Kubespray offline support scripts) or create one to specify:
+  - The local repository URLs for OS packages and PyPI.
+  - The `kube_image_repo` setting pointing to your private container registry.
+  - Any custom paths to the offline files.
+
+#### c. Group Variables Update
+- **Container Runtime Settings:**  
+  In the Kubespray group variable files (e.g., `inventory/mycluster/group_vars/all/docker.yml` or `containerd.yml`), change settings like:
+  - `docker_registry_mirror` or `containerd_registry_mirror` to point to your local registry.
+  - Validate that environment variables and paths point to your offline resources.
+
+---
+
+### 6. Deploying the Cluster with Kubespray
+
+1. **Dry Run (Optional):**  
+   It can be helpful to perform a dry run of the Ansible playbook to catch any configuration issues.
+
+2. **Run the Deployment:**  
+   Use the following command from your control machine:
+   ```bash
+   ansible-playbook -i inventory/mycluster/hosts.yml cluster.yml --extra-vars "@offline.yml"
+   ```
+   - The `--extra-vars "@offline.yml"` flag will load your offline-specific configurations.
+   
+3. **Monitor the Process:**  
+   Watch the logs to ensure that Kubespray is loading the container images from your private registry and that no external internet calls are made.
+
+---
+
+### 7. Post-Deployment Validation
+
+- **Node and Pod Verification:**
+  - Run `kubectl get nodes` to check node status.
+  - Use `kubectl get pods -A` to check that system pods are running.
+  
+- **Networking Tests:**
+  - Validate DNS resolution inside the cluster (e.g., using `nslookup` or `dig` commands from a pod).
+  
+- **Application Deployment:**
+  - Deploy a simple test workload using an image from your local registry to ensure image pulls and connectivity are working.
+
+- **Documentation and Backup:**
+  - Save the configuration files and document the steps performed for future offline updates or re-deployments.
+
+---
+
+## Offline Kubespray Deployment Checklist
+
+```
+[ ] **Prerequisites:**
+    [ ] Verify control machine and target nodes use the same OS version.
+    [ ] Install Ansible (v2.11+) and Python3 with necessary modules.
+    [ ] Setup container runtime (Docker, containerd, or nerdctl) on all nodes.
+    [ ] Ensure connectivity between offline nodes and preloaded file servers (if applicable).
+
+[ ] **Downloading Offline Files (Online Machine):**
+    [ ] Clone/download the Kubespray offline support repository.
+    [ ] Edit config.sh (or similar) to match your environment.
+    [ ] Run download-all.sh to fetch container images, PyPI files, and OS packages.
+    [ ] Verify the downloads in the outputs directory.
+
+[ ] **Transfer Files to Offline Environment:**
+    [ ] Copy the outputs directory via removable storage or internal network.
+    [ ] Verify file integrity on the offline control machine.
+
+[ ] **Setting Up Offline Infrastructure:**
+    [ ] Configure a local OS package repository (apt/yum mirror).
+    [ ] Set up a private container registry:
+         [ ] Install and run the registry (e.g., Docker registry).
+         [ ] Load and tag all container images, then push to the registry.
+    [ ] (Optional) Configure a local PyPI mirror.
+
+[ ] **Configuring Kubespray:**
+    [ ] Create/edit inventory file (e.g., inventory/mycluster/hosts.yml) with node details.
+    [ ] Create/edit offline.yml to point to local repositories and registry endpoints.
+    [ ] Update group_vars (docker.yml or containerd.yml) with local registry mirror settings.
+
+[ ] **Running the Kubespray Deployment:**
+    [ ] (Optional) Execute a dry run of the Ansible playbook.
+    [ ] Run the Ansible playbook:
+         ansible-playbook -i inventory/mycluster/hosts.yml cluster.yml --extra-vars "@offline.yml"
+    [ ] Monitor the output for any errors or misconfigurations.
+
+[ ] **Post-Deployment Validation:**
+    [ ] Verify nodes with `kubectl get nodes`.
+    [ ] Check pod status with `kubectl get pods -A`.
+    [ ] Test networking (DNS, connectivity) within the cluster.
+    [ ] Deploy a simple application using an image from your local registry.
+    [ ] Document the configurations and process for future reference.
+```
+
+---
+
+### Additional Resources
+
+- **Kubespray Offline GitHub Repository:**  
+  [https://github.com/kubespray-offline/kubespray-offline](https://github.com/kubespray-offline/kubespray-offline) 
+
+- **On-Premise Offline Mode Guide:**  
+  [On-Premise Setup of Kubernetes Cluster using Kubespray (Offline Mode) – Part 1](https://opstree.com/blog/2022/10/25/on-premise-setup-of-kubernetes-cluster-using-kubespray-offline-mode-part-1/) 
+
+---
+
+This comprehensive guide should get you well on your way to deploying a Kubernetes cluster with Kubespray in an offline environment. If you have any more detailed questions on any step or need further clarification on particular configurations, feel free to ask!
