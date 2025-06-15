@@ -112,3 +112,101 @@ offline-files/storage.googleapis.com/gvisor/releases/release/20250512.0/x86_64/r
 offline-files/storage.googleapis.com/gvisor/releases/release/20250512.0/x86_64/containerd-shim-runsc-v1
 offline-files/get.helm.sh/
 offline-files/get.helm.sh/helm-v3.16.4-linux-amd64.tar.gz
+
+Below is a step‐by‐step explanation of how to modify your `offline.yml` file so that Kubespray uses your locally extracted offline files:
+
+---
+
+### 1. Understand the Offline Files Directory Structure
+
+When you run the offline scripts, they typically extract files into a directory (for example, `/opt/offline-files` or another path you set). Inside that directory, you’ll usually find subdirectories for:
+
+- **Container images:** Usually stored under an `images` folder (tar archives of container images).
+- **OS Packages:** Repository files (for apt or yum) for offline package installation.
+- **PyPI mirror:** A folder that contains the Python packages.
+- **Kubespray files:** Additional files or overrides that may be needed during playbook execution.
+
+The offline support scripts are designed so that these subdirectories mirror what the playbooks expect.
+
+---
+
+### 2. Edit the `offline.yml` File
+
+Open your `offline.yml` (provided in the Kubespray offline support scripts) in your favorite text editor. Inside, you’ll find variables that you need to customize to point to your local folders. For example, you might see something like this:
+
+```yaml
+# offline.yml
+---
+# Base directory where you extracted all offline files:
+offline_files_dir: "/path/to/your/extracted/offline-files"
+
+# Define the specific paths based on that base directory:
+offline_images_dir: "{{ offline_files_dir }}/images"
+offline_yum_repo: "{{ offline_files_dir }}/yum"       # For RHEL/CentOS based systems
+offline_apt_repo: "{{ offline_files_dir }}/apt"       # For Debian/Ubuntu based systems
+offline_pypi_mirror: "{{ offline_files_dir }}/pypi"
+
+# Local container registry settings:
+# Set the registry address where you loaded the offline container images.
+kube_image_repo: "my.local.registry:5000"
+docker_registry_mirror: "my.local.registry:5000"
+```
+
+**What to do:**
+
+- **Update the Base Path:**  
+  Change the value of `offline_files_dir` to the actual absolute path where you extracted your offline files.
+
+- **Verify and Adjust Subdirectory Names:**  
+  Ensure that the variable names (like `offline_images_dir`, `offline_yum_repo`, etc.) match the folder names you have.  
+  If your offline files directory uses different names, update the variables accordingly.
+
+- **Local Container Registry:**  
+  If you set up a local registry for container images, change the `kube_image_repo` (and if needed, `docker_registry_mirror`) so that Kubespray pulls images from your local registry rather than trying to reach out to the internet.
+
+These variables inform Kubespray where to find all required resources during the playbook run.
+
+---
+
+### 3. Use the Configured `offline.yml` in Your Kubespray Deployment
+
+When you run your playbook, pass the customized `offline.yml` file as an extra variable file. For example, if your inventory file is at `inventory/mycluster/hosts.yml`, run:
+
+```bash
+ansible-playbook -i inventory/mycluster/hosts.yml cluster.yml --extra-vars "@offline.yml"
+```
+
+This tells Ansible (and thus Kubespray) to load the offline configuration, which instructs the playbooks to reference your local files rather than attempting to fetch content from the internet.
+
+---
+
+### 4. What to Do if Things Don’t Work
+
+- **Double-check Paths:**  
+  Verify that the paths in `offline.yml` exactly match the location of your offline files. A small typo or wrong directory name can cause the playbooks to fail or attempt Internet lookups.
+
+- **Review Logs:**  
+  If the playbook fails, review the error messages; they often indicate if a file or resource isn’t found, so you can adjust accordingly.
+
+- **Consult the Offline Support Repository:**  
+  The [Kubespray Offline GitHub repository](https://github.com/kubespray-offline/kubespray-offline) contains example configurations and additional documentation that might be useful if you run into issues.
+
+---
+
+### In Summary
+
+1. **Extract your offline files** into a known directory (e.g., `/opt/offline-files`).
+2. **Open and edit `offline.yml`**:  
+   - Set `offline_files_dir` to your extraction path.  
+   - Adjust subdirectory variables (`offline_images_dir`, etc.) as needed.  
+   - Set your `kube_image_repo` to your local container registry.
+3. **Run the playbook with**:  
+   ```bash
+   ansible-playbook -i inventory/mycluster/hosts.yml cluster.yml --extra-vars "@offline.yml"
+   ```
+
+Following these steps ensures that Kubespray will use your locally stored files instead of querying the Internet.
+
+---
+
+If you need more details on any of these steps—such as setting up a local container registry or troubleshooting specific errors—feel free to ask!
