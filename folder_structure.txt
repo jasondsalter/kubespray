@@ -1,3 +1,5 @@
+https://github.com/kubernetes-sigs/kubespray/issues/9206
+
 offline-files/
 offline-files/dl.k8s.io/
 offline-files/dl.k8s.io/release/
