@@ -20,11 +20,12 @@ diff ~/DO280/labs/non-http-multus/network-attachment-definition.yaml ~/DO280/sol
 Deployment.yml
 --> api server ---> etcd ---Controller --> Scheduler
 
-OC Setting resource limits
-    oc set resources deployment/web --requests=memory=100Mi 
-    oc set resources deployment/web --requests=cpu=10m 
-view with 
-    oc edit deployment/web
+
+
+************************************************************************
+Resource limits
+OS    oc set resources deployment/nginx --limits=cpu=200m,memory=512Mi --requests=cpu=100m,memory=256Mi   
+k8s   kubectl set resources deployment/nginx --limits=cpu=200m,memory=512Mi --requests=cpu=100m,memory=256Mi
 
 
 
