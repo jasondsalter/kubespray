@@ -8,3 +8,12 @@ ovn-kubernetes - how pods get their interfaces
 https://www.cncf.io/blog/2017/05/23/cncf-hosts-container-networking-interface-cni/
 
 oc explain 
+
+watch oc get deployments,pods
+
+view all IPs on the Node
+    oc debug node/master01 -- chroot /host ip addr
+
+Compare difference between two files
+diff ~/DO280/labs/non-http-multus/network-attachment-definition.yaml ~/DO280/solutions/non-http-multus/network-attachment-definition.yaml
+
