@@ -1,0 +1,10 @@
+The MetalLB Component
+
+MetalLB is a load balancer component that provides a load balancing service for clusters that do not run on a cloud provider, such as a bare metal cluster, or clusters that run on hypervisors. MetalLB operates in two modes: layer 2 and Border Gateway Protocol (BGP), with different properties and requirements. You must plan the use of MetalLB to consider your requirements and your network design.
+MetalLB is an operator that you can install with the Operator Lifecycle Manager. After installing the operator, you must configure MetalLB through its custom resource definitions. In most situations, you must provide MetalLB with an IP address range.
+
+
+ovn-kubernetes - how pods get their interfaces
+https://www.cncf.io/blog/2017/05/23/cncf-hosts-container-networking-interface-cni/
+
+oc explain 
