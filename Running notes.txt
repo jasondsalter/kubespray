@@ -44,8 +44,14 @@ Resource Quotas
 
       oc explain ResourceQuota
 
+Create Limit Ranges for project level quotas - do prior to making deployments
+
 
 ************************************************************************
 Node specific
     oc describe node/master01
     oc adm top node
+
+********************************************************************************
+View event logs
+    oc get ev 
