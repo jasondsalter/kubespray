@@ -17,3 +17,16 @@ view all IPs on the Node
 Compare difference between two files
 diff ~/DO280/labs/non-http-multus/network-attachment-definition.yaml ~/DO280/solutions/non-http-multus/network-attachment-definition.yaml
 
+Deployment.yml
+--> api server ---> etcd ---Controller --> Scheduler
+
+OC Setting resource limits
+    oc set resources deployment/web --requests=memory=100Mi 
+    oc set resources deployment/web --requests=cpu=10m 
+view with 
+    oc edit deployment/web
+
+
+
+
+
