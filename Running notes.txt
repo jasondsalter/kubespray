@@ -19,15 +19,33 @@ diff ~/DO280/labs/non-http-multus/network-attachment-definition.yaml ~/DO280/sol
 
 Deployment.yml
 --> api server ---> etcd ---Controller --> Scheduler
+**********************************************************************
+Create a deployment
+    oc create deployment web --image nginx --port 8080 --replicas 2
 
+Modify a deployment
+    oc set resources
 
+Scale a Deployment
+    oc scale deployment xxxx --replicas=10
+
+View a deployment
+    oc describle deployment
 
 ************************************************************************
 Resource limits
 OS    oc set resources deployment/nginx --limits=cpu=200m,memory=512Mi --requests=cpu=100m,memory=256Mi   
 k8s   kubectl set resources deployment/nginx --limits=cpu=200m,memory=512Mi --requests=cpu=100m,memory=256Mi
 
+Resource Quotas
+    Set a hard quora called one-cpu
+      oc create quota one-cpu --hard=requests.cpu=1
+      oc get quota one-cpu -o yaml
+
+      oc explain ResourceQuota
 
 
-
-
+************************************************************************
+Node specific
+    oc describe node/master01
+    oc adm top node
