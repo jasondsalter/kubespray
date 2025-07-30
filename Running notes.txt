@@ -1,11 +1,8 @@
-The MetalLB Component
 
-MetalLB is a load balancer component that provides a load balancing service for clusters that do not run on a cloud provider, such as a bare metal cluster, or clusters that run on hypervisors. MetalLB operates in two modes: layer 2 and Border Gateway Protocol (BGP), with different properties and requirements. You must plan the use of MetalLB to consider your requirements and your network design.
-MetalLB is an operator that you can install with the Operator Lifecycle Manager. After installing the operator, you must configure MetalLB through its custom resource definitions. In most situations, you must provide MetalLB with an IP address range.
-
-Network Attachment Definition
-ovn-kubernetes - how pods get their interfaces
-https://www.cncf.io/blog/2017/05/23/cncf-hosts-container-networking-interface-cni/
+RBAC
+    Cluster Admin
+    self provisioner - can create a project - team lead
+    developer - can modify within a project
 
 oc explain 
 
@@ -32,10 +29,58 @@ Scale a Deployment
 View a deployment
     oc describle deployment
 
+View SA in a Project
+    oc get sa
+
+View Roles in a project
+    oc get rolebindings
+
+
+
 ************************************************************************
-Resource limits
-OS    oc set resources deployment/nginx --limits=cpu=200m,memory=512Mi --requests=cpu=100m,memory=256Mi   
-k8s   kubectl set resources deployment/nginx --limits=cpu=200m,memory=512Mi --requests=cpu=100m,memory=256Mi
+Node specific
+    oc describe node/master01
+    oc adm top node
+********************************************************************************
+View event logs
+    oc get ev 
+********************************************************************************
+TLS
+    oc create route "name" --service "name" --hostname "url"
+
+Network Policies
+    Allow you define ingress and egress communication
+    usually done by using labels
+    start with default deny to block all, then add specific policies (
+
+
+Openshift    Service-ca controller
+K8s          CertManager for k8s  
+    oc annotate 
+
+********************************************************************************
+Exposing Non-HTTP Services with Metal LB
+The MetalLB Component
+
+MetalLB is a load balancer component that provides a load balancing service for clusters that do not run on a cloud provider, such as a bare metal cluster, or clusters that run on hypervisors. MetalLB operates in two modes: layer 2 and Border Gateway Protocol (BGP), with different properties and requirements. You must plan the use of MetalLB to consider your requirements and your network design.
+MetalLB is an operator that you can install with the Operator Lifecycle Manager. After installing the operator, you must configure MetalLB through its custom resource definitions. In most situations, you must provide MetalLB with an IP address range.
+
+********************************************************************************
+
+Network Attachment Definition
+ovn-kubernetes - how pods get their interfaces
+add a second Nic
+https://www.cncf.io/blog/2017/05/23/cncf-hosts-container-networking-interface-cni/
+
+
+************************************************************************
+Chapter 6
+
+Resource limits - Maximum Resources
+Resource Requests -Workloads can decalre there minimum required resources
+Example
+        OS    oc set resources deployment/nginx --limits=cpu=200m,memory=512Mi --requests=cpu=100m,memory=256Mi   
+        k8s   kubectl set resources deployment/nginx --limits=cpu=200m,memory=512Mi --requests=cpu=100m,memory=256Mi
 
 Resource Quotas
     Set a hard quora called one-cpu
@@ -45,13 +90,72 @@ Resource Quotas
       oc explain ResourceQuota
 
 Create Limit Ranges for project level quotas - do prior to making deployments
+    limit
+    request
+
+Projects / Namespace
+    oc explain project
+    oc get project "name" -o yaml
+
+Create a project Template - Ensures all new projects and created in a certain way
+    oc adm create-bootstrap-project-template -o yaml > prt.yaml
+    edit template and add in new options eg argom network policies, 
+    once edited -
+        to use in a specific single use        oc create -f template -n "name"
+        to use for all projects                oc edit projects.config.openshift.io/cluster
+                update                         spec:
+                                                  projectRequestTemplate:
+                                                    name: project-request
+
+oc get clusterrole self-provisioners -o yaml
+oc get clusterrolebinding self-provisioners -o yaml
 
 
 ************************************************************************
-Node specific
-    oc describe node/master01
-    oc adm top node
 
-********************************************************************************
-View event logs
-    oc get ev 
+RedHat Openshift Kubernetes Engine (OKE) - in dev and prod?
+https://www.devopsschool.com/blog/openshift-step-by-step-guide-to-install-and-set-up-okd-openshift-kubernetes-distribution/
+https://github.com/okd-project/okd/releases
+https://okd.io/docs/project/crc
+https://developers.redhat.com/products/openshift-local/overview
+
+
+RH Openshift Local - DEV
+oke for test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
