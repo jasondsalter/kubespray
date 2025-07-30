@@ -230,7 +230,20 @@ Every pod has an api token
             oc rsh podname
             /run/secrets/kubernetes.io/serviceaccount
 
+Jobs / Cronjobs
+            oc explain job
+            oc create job
+            oc create job --dry-run=client -o yaml test --image=registry.access.redhat.com/ubi8/ubi:8.6 "thencommnd"
+            starts pod for 100 seconds
 
+cronjob    Repeatable job
+            oc create cronjob --dry-run=client -o yaml test --image=registry.access.redhat.com/ubi8/ubi:8.6 --                    schedule='0 0 * * *' "then command"
+
+Clean up    oc get deployments -n prune-apps -o wide
+            * Multiple images are being used
+            List the container images in the node
+                oc debug node/master01 -- chroot /host crictl images | egrep '^IMAGE|httpd|nginx'
+                oc debug node/master01 -- chroot /host crictl rmi --prune
 
 
 ************************************************************************
