@@ -1,3 +1,10 @@
+https://rhtapps.redhat.com/trainingbookshelf/ebook/do280-4.14
+
+
+
+To append a command to the end of a yaml file
+    oc get limittange -n "name" -o yaml >>template.yaml
+
 
 RBAC
     Cluster Admin
@@ -102,7 +109,9 @@ Create a project Template - Ensures all new projects and created in a certain wa
     edit template and add in new options eg argom network policies, 
     once edited -
         to use in a specific single use        oc create -f template -n "name"
-        to use for all projects                oc edit projects.config.openshift.io/cluster
+   
+change the global cluster project configuration.
+                oc edit projects.config.openshift.io cluster
                 update                         spec:
                                                   projectRequestTemplate:
                                                     name: project-request
@@ -124,6 +133,44 @@ RH Openshift Local - DEV
 oke for test
 
 
+************************************************************************
+
+if you use the vi editor, then you can use the following procedure to move a block of text:
+
+    Move to the beginning of the block.
+        Press V to enter visual line mode. This mode selects entire lines for manipulation.
+    Move to the end of the block. The editor highlights the selected lines.
+        Press d to delete the lines and to store them in a register for later use.
+    Move to the destination.
+        Press P to insert the lines that are stored in the register.
+You can also press dd to delete entire lines, and press . to repeat the operation.
+
+************************************************************************
+Chapter 7 - Operators
+    Extend the Kubernetes API Extensions - Allows users to use custom resouces
+
+    Cluster Operators   Cluster operators provide the platform services of OpenShift, such as the web console and the OAuth server.
+                        oc get co
+    Add-On Operators    OpenShift includes the Operator Lifecycle Manager (OLM). The OLM helps users to install and update operators in a cluster.
+    Other Operators     custom
+    Operator Lifecycle  Manages Add-Ons 
+    Manager        
+
+    Creates custom resources
+            oc get packagemanifest
+            oc describe packagemanifest 
+
+    View Catalog Sources (for other mirrors)
+            oc get catalogsource -n openshift-marketplace
+
+    View avaailable operators
+            oc get packagemanifests
+
+
+    To install manaually
+            oc create ns "name"
+            oc create operator-group 
+            oc create subscription
 
 
 
@@ -131,9 +178,7 @@ oke for test
 
 
 
-
-
-
+DeamonSet - Runs 1 pod per node as needs specific 1-2-1 node access
 
 
 
