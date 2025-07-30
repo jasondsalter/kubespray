@@ -1,6 +1,12 @@
 https://rhtapps.redhat.com/trainingbookshelf/ebook/do280-4.14
+https://rol.redhat.com
 
 
+
+
+
+DeamonSet - Runs 1 pod per node as needs specific 1-2-1 node access
+Openshift doesnt not allow pod to run as root
 
 To append a command to the end of a yaml file
     oc get limittange -n "name" -o yaml >>template.yaml
@@ -118,7 +124,7 @@ change the global cluster project configuration.
 
 oc get clusterrole self-provisioners -o yaml
 oc get clusterrolebinding self-provisioners -o yaml
-
+oc get rolebindings
 
 ************************************************************************
 
@@ -156,44 +162,75 @@ Chapter 7 - Operators
     Operator Lifecycle  Manages Add-Ons 
     Manager        
 
-    Creates custom resources
-            oc get packagemanifest
-            oc describe packagemanifest 
-
-    View Catalog Sources (for other mirrors)
+    View Catalog Sources (for other mirrors) - like a repo
+    Examine catalog sources in the openshift-marketplace namespace to know which catalog sources are available in a cluster.
             oc get catalogsource -n openshift-marketplace
 
-    View avaailable operators
+    View available operators
+    The OLM creates a package manifest for each available operator. The package manifest contains the required information to install an operator, such as the        available channels.List the package manifests to know which operators are available for installation.
             oc get packagemanifests
 
+    Operator Group    
+            Operator groups define how the OLM presents operators across namespaces.
 
-    To install manaually
+    Subscription
+            Cluster administrators create subscriptions to install operators
+
+    Operator
+            The OLM creates operator resources to store information about installed operators.
+
+    Install Plan
+            The OLM creates install plan resources as part of the installation and update process. When requiring approvals, administrators must approve install              plans.
+
+    Cluster service version (CSV)
+            Each version of an operator has a corresponding CSV. The CSV contains the information that the OLM requires to install the operator.
+    
+
+    To install manaually via manifest
             oc create ns "name"
-            oc create operator-group 
+            oc create operator-group            Operator groups define how the OLM presents operators across namespaces
             oc create subscription
 
+************************************************************************
+Chapter 8 - Application Security
+
+Service Accounts - dont use oAuth and cannot login    
+                    dont expire
+
+
+Security Context - Holds pod level security attributes
+            oc explain pod.spec.Securitycontext
+
+SCC - Security Context Constraints - Openshift way of doing security    
+            oc explain scc
+            oc get scc 
+            oc get scc restricted-v2            By default each pod gets restricted-v2    (most res
+            oc get scc priviledged              Least restrictive dropping all security
+
+Check the scc used 
+            Verify the appropriate SCC to use with this deployment.
+                oc get deployment deployment-name -o yaml | oc adm policy scc-subject-review -f -
+        
+            check whether a  user, account or group can create a pod and if it needs to be escalated.
+                oc adm policy scc-subject-review -h
+
+to use a new scc
+            oc create serviceaccount svc_jason
+            oc adm policy add-scc-to-user SCC(eg restricted-v2) -z svc_jason  
+            oc set serviceaccount deployment/deployment-name svc_jason
+
+view Service Accounts
+            oc get sa
+            This are associated to a SCC
 
 
 
 
 
 
-DeamonSet - Runs 1 pod per node as needs specific 1-2-1 node access
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+************************************************************************
+Chapter 9 - 
 
 
 
