@@ -208,7 +208,7 @@ SCC - Security Context Constraints - Openshift way of doing security
             oc get scc priviledged              Least restrictive dropping all security
 
 Check the scc used 
-            Verify the appropriate SCC to use with this deployment.
+           * Verify the appropriate SCC to use with this deployment.
                 oc get deployment deployment-name -o yaml | oc adm policy scc-subject-review -f -
         
             check whether a  user, account or group can create a pod and if it needs to be escalated.
@@ -218,21 +218,23 @@ to use a new scc
             oc create serviceaccount svc_jason
             oc adm policy add-scc-to-user SCC(eg restricted-v2) -z svc_jason  
             oc set serviceaccount deployment/deployment-name svc_jason
+            oc get pods
 
 view Service Accounts
             oc get sa
             This are associated to a SCC
 
 
-
+Every pod has an api token
+            oc get pods
+            oc rsh podname
+            /run/secrets/kubernetes.io/serviceaccount
 
 
 
 
 ************************************************************************
 Chapter 9 - 
-
-
 
 
 
