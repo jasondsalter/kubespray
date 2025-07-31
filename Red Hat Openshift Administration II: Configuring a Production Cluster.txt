@@ -3,9 +3,13 @@ https://rol.redhat.com
 https://console.redhat.com/openshift/overview
 https://quay.io/repository/            online repo
 
+Have taken Red Hat OpenShift Administration I: Containers & Kubernetes (DO180) course or have comparable work experience using OpenShift Container Platform
 
+Have taken Red Hat OpenShift Administration II: Operating a Production Kubernetes Cluster (DO280) course or have comparable work experience using OpenShift Container Platform
 
+https://www.redhat.com/en/services/training/red-hat-certified-openshift-administrator-exam
 
+*******************************************************************************************************
 
 DeamonSet - Runs 1 pod per node as needs specific 1-2-1 node access
 RoleBinding
