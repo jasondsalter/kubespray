@@ -23,9 +23,26 @@ https://open-cluster-management.io/
 
 acs - advanced cluster services - Red Hat Advanced Cluster Security for Kubernetes (Red Hat Advanced Cluster Security or RHACS) provides the tools and capabilities to address the security needs of a cloud-native development approach on Kubernetes.
 
+Libvirt
+    A virtualization management library and API.
+    Manages hypervisors like KVM, QEMU, Xen, and VMware ESXi.
+    Provides tools like virsh and virt-manager for creating, controlling, and monitoring VMs.
+    Used in traditional virtualization setups — think bare-metal servers or VM hosts.
+
+https://kubevirt.io/
+KubeVirt
+    A Kubernetes extension that lets you run virtual machines inside Kubernetes Pods.
+    Built on top of KVM/QEMU/libvirt — it uses them under the hood.
+    Adds VM support to Kubernetes via Custom Resource Definitions (CRDs).
+    Ideal for hybrid workloads where containers and VMs coexist in the same cluster.
+*******************************************************************************************************
 
 
 *******************************************************************************************************
+
+
+
+
 
 DeamonSet - Runs 1 pod per node as needs specific 1-2-1 node access
 RoleBinding
@@ -51,8 +68,7 @@ watch oc get deployments,pods
 view all IPs on the Node
     oc debug node/master01 -- chroot /host ip addr
 
-Compare difference between two files
-diff ~/DO280/labs/non-http-multus/network-attachment-definition.yaml ~/DO280/solutions/non-http-multus/network-attachment-definition.yaml
+
 
 Deployment.yml
 --> api server ---> etcd ---Controller --> Scheduler
@@ -113,7 +129,66 @@ add a second Nic
 https://www.cncf.io/blog/2017/05/23/cncf-hosts-container-networking-interface-cni/
 
 
+
 ************************************************************************
+
+Chapter 1 - Declarative Resource Management
+
+Delaritive - Desired State
+    eg yaml files for deployments
+
+Imperitive Workflow - step by step
+    You issue commands to make changes directly.
+    Common via oc CLI or kubectl commands.
+        oc scale deployment my-app --replicas=3
+
+The --dry-run=server option submits a server-side request without persisting the resource.
+The --validate=true option uses a schema to validate the input and fails the request if it is invalid.
+
+Compare difference between two files
+    diff ~/DO280/labs/non-http-multus/network-attachment-definition.yaml ~/DO280/solutions/non-http-multus/network-        attachment-definition.yaml
+
+To Restart a deployment
+         oc rollout restart deployments/"name"
+
+Kustomize
+        Kustomize is a tool built into kubectl that lets you customize Kubernetes YAML manifests without using                templates. It’s all about managing configuration in a declarative, reusable, and scalable way.
+
+Overlay - Customizations layered on top of the base (e.g. different replicas for dev test and prod)
+
+************************************************************************
+
+Chapter 2 - Deploy Packaged Applications
+
+Helm        Helm is an open source application that helps to manage the lifecycle of Kubernetes applications.
+            A chart is a package that describes a set of Kubernetes resources that you can deploy
+
+1   The Chart.yaml file contains chart metadata, such as the name and version of the chart.
+2 	The templates directory contains files that define application resources such as deployments.
+3 	The values.yaml file contains default values for the chart.
+
+        Use the helm show command to display information about a chart
+                helm show chart "name"
+        The show values subcommand displays the default values for the chart
+                helm show values "name"
+        Use the --dry-run option to preview the effects of installing a chart.
+                helm install release-name chart-reference  --dry-run --values values.yaml
+        Use the helm list command to inspect releases on a cluster.
+                helm list
+                    If you use the --all-namespaces is shows all
+        The following command adds a repository:
+                helm repo add openshift-helm-charts https://charts.openshift.io/
+
+                The helm repo add command updates the ~/.config/helm/repositories.yaml configuration file, which                      keeps the list of configured repositories.
+        The helm search repo command lists all available charts in the configured repositories:
+                helm search repo --versions
+
+
+
+
+
+************************************************************************
+
 Chapter 6
 
 Resource limits - Maximum Resources
