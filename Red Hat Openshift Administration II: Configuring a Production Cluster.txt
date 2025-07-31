@@ -9,6 +9,22 @@ Have taken Red Hat OpenShift Administration II: Operating a Production Kubernete
 
 https://www.redhat.com/en/services/training/red-hat-certified-openshift-administrator-exam
 
+Minicube - Minishift
+https://developers.redhat.com/products/openshift-local/getting-started
+
+Build ocp cluster for home use
+https://computingforgeeks.com/how-to-deploy-openshift-container-platform-on-kvm/
+
+platform plus subscription?
+
+acm - advanced cluster management - Red Hat Advanced Cluster Management (RHACM) for Kubernetes is a centralized management platform that simplifies and streamlines the administration of multiple Kubernetes clusters, regardless of their location 
+
+https://open-cluster-management.io/
+
+acs - advanced cluster services - Red Hat Advanced Cluster Security for Kubernetes (Red Hat Advanced Cluster Security or RHACS) provides the tools and capabilities to address the security needs of a cloud-native development approach on Kubernetes.
+
+
+
 *******************************************************************************************************
 
 DeamonSet - Runs 1 pod per node as needs specific 1-2-1 node access
