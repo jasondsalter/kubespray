@@ -1,11 +1,18 @@
 https://rhtapps.redhat.com/trainingbookshelf/ebook/do280-4.14
 https://rol.redhat.com
+https://console.redhat.com/openshift/overview
+https://quay.io/repository/            online repo
 
 
 
 
 
 DeamonSet - Runs 1 pod per node as needs specific 1-2-1 node access
+RoleBinding
+ClusterRoleBinding 
+
+
+
 Openshift doesnt not allow pod to run as root
 
 To append a command to the end of a yaml file
@@ -247,12 +254,26 @@ Clean up    oc get deployments -n prune-apps -o wide
 
 
 ************************************************************************
-Chapter 9 - 
+Chapter 9 - Updates
 
+Administrator - Cluster Settings
 
+release candidate -
+    The candidate channel delivers updates for testing feature acceptance in the next version of OpenShift Container      Platform. 
 
+Fast Channel
+    The fast channel delivers updates as soon as Red Hat declares the given version as a general availability release
+    pre prod / staging
 
+Stable Channel
+    Red Hat support and site reliability engineering (SRE) teams monitor operational clusters with the updates from       the fast channel.
+    profduction
 
+EUS channel
+    Stable extended support
 
+Full upgrade causes outage
 
+cli
+    oc adm upgrade 
 
